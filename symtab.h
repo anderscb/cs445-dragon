@@ -24,4 +24,6 @@ list_t *scope_insert(scope_t *top, char *name); /* insert name into top scope */
 list_t *scope_search(scope_t *top, char *name); /* search name in top scope */
 list_t *global_scope_search(scope_t *top, char *name);  /* search name in all scopes (starting at top scope) */
 
+int hashpjw( char *s );
+
 #endif
