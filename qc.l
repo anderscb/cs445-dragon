@@ -26,25 +26,25 @@ whitespace  [ \t]+
 "else"          { fprintf( stderr, "[ELSE]" ); return ELSE; }
 "while"         { fprintf( stderr, "[WHILE]" ); return WHILE; }
 "do"            { fprintf( stderr, "[DO]" ); return DO; }
-{identifier}    { fprintf( stderr, "[ID:%s]", yylval.sval = ( char* )strdup(yytext) ); return ID; }
+{identifier}    { fprintf( stderr, "[ID:%s]", yylval.sval = make_list(yytext) ); return ID; }
 {number}        { fprintf( stderr, "[INUM:%d]", yylval.ival = atoi(yytext) ); return INUM; }
-{number}"."{number}     { fprintf( stderr, "[RNUM:%d]", yylval.rval = atof(yytext) ); return RNUM; }
+{number}"."{number}     { fprintf( stderr, "[RNUM:%f]", yylval.rval = atof(yytext) ); return RNUM; }
 {whitespace}    { ; }
 ":="            { fprintf( stderr, "[ASSIGNOP]" ); return ASSIGNOP; }
-"<"             { fprintf( stderr, "[RELOP:%d]", yyval.opval = LT ); return RELOP; }
-"<="            { fprintf( stderr, "[RELOP:%d]", yyval.opval = LE ); return RELOP; }
-">"             { fprintf( stderr, "[RELOP:%d]", yyval.opval = GT ); return RELOP; }
-">="            { fprintf( stderr, "[RELOP:%d]", yyval.opval = GE ); return RELOP; }
-"<>"            { fprintf( stderr, "[RELOP:%d]", yyval.opval = NE ); return RELOP; }
-"="             { fprintf( stderr, "[RELOP:%d]", yyval.opval = EQ ); return RELOP; }
-"+"             { fprintf( stderr, "[ADDOP:%d]", yyval.opval = PLUS ); return ADDOP; }
-"-"             { fprintf( stderr, "[ADDOP:%d]", yyval.opval = MINUS ); return ADDOP; }
-"or"            { fprintf( stderr, "[ADDOP:%d]", yyval.opval = OR ); return ADDOP; }
-"*"             { fprintf( stderr, "[MULOP:%d]", yyval.opval = STAR ); return MULOP; }
-"/"             { fprintf( stderr, "[MULOP:%d]", yyval.opval = SLASH ); return MULOP; }
-"div"           { fprintf( stderr, "[MULOP:%d]", yyval.opval = DIV ); return MULOP; }
-"mod"           { fprintf( stderr, "[MULOP:%d]", yyval.opval = MOD ); return MULOP; }
-"and"           { fprintf( stderr, "[MULOP:%d]", yyval.opval = AND ); return MULOP; }
+"<"             { fprintf( stderr, "[RELOP:%d]", yylval.opval = LT ); return RELOP; }
+"<="            { fprintf( stderr, "[RELOP:%d]", yylval.opval = LE ); return RELOP; }
+">"             { fprintf( stderr, "[RELOP:%d]", yylval.opval = GT ); return RELOP; }
+">="            { fprintf( stderr, "[RELOP:%d]", yylval.opval = GE ); return RELOP; }
+"<>"            { fprintf( stderr, "[RELOP:%d]", yylval.opval = NE ); return RELOP; }
+"="             { fprintf( stderr, "[RELOP:%d]", yylval.opval = EQ ); return RELOP; }
+"+"             { fprintf( stderr, "[ADDOP:%d]", yylval.opval = PLUS ); return ADDOP; }
+"-"             { fprintf( stderr, "[ADDOP:%d]", yylval.opval = MINUS ); return ADDOP; }
+"or"            { fprintf( stderr, "[ADDOP:%d]", yylval.opval = OR ); return ADDOP; }
+"*"             { fprintf( stderr, "[MULOP:%d]", yylval.opval = STAR ); return MULOP; }
+"/"             { fprintf( stderr, "[MULOP:%d]", yylval.opval = SLASH ); return MULOP; }
+"div"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = DIV ); return MULOP; }
+"mod"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = MOD ); return MULOP; }
+"and"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = AND ); return MULOP; }
 "("             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }
 ")"             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }
 "["             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }

@@ -9,8 +9,6 @@
 //     struct list_s *next;
 // } list_t;
 
-char *strdup(const char *);
-
 /* constructor/destructor */
 list_t *make_list( char *str ) {
     list_t *p = (list_t *)malloc( sizeof(list_t));

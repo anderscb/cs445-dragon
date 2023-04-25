@@ -41,7 +41,7 @@ scope_t *scope_pop(scope_t *top){
 }
 
 /* insert at top scope */
-list_t *scope_insert(scope_t *top, char *name){
+list_t *scope_insert(scope_t *top, list_t *name){
     if (top == NULL){
         return NULL;
     }
@@ -52,7 +52,7 @@ list_t *scope_insert(scope_t *top, char *name){
 }
 
 /* search at top scope */
-list_t *scope_search(scope_t *top, char *name){
+list_t *scope_search(scope_t *top, list_t *name){
     int index = hashpjw(name);
 
     if (top == NULL){
@@ -63,7 +63,7 @@ list_t *scope_search(scope_t *top, char *name){
 }
 
 /* search in all scopes */
-list_t *global_scope_search(scope_t *top, char *name){
+list_t *global_scope_search(scope_t *top, list_t *name){
     scope_t *curr = top;
     list_t *p;
     while (curr != NULL){   /* searching all scopes */

@@ -1,11 +1,14 @@
-qc: y.tab.o lex.yy.o tree.o symtab.o list.o
-	gcc -g -o qc y.tab.o lex.yy.o tree.o symtab.o list.o -ly -ll -std=c11
+qc: y.tab.o lex.yy.o semantic.o tree.o symtab.o list.o
+	gcc -g -o qc y.tab.o lex.yy.o semantic.o tree.o symtab.o list.o -ly -lfl -std=c11
 
 y.tab.o: y.tab.c
 	gcc -g -c y.tab.c
 
 lex.yy.o: lex.yy.c
 	gcc -g -c lex.yy.c
+
+semantic.o: semantic.c
+	gcc -g -c semantic.c -std=c11
 
 tree.o: tree.c
 	gcc -g -c tree.c -std=c11

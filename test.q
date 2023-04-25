@@ -1,5 +1,7 @@
 def main ( input, output );
+    var x: integral;
+    var y: rational;
 begin
-    x := 2 + 3 * 4
+    y := x
 end
 .

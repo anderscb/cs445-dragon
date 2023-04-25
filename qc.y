@@ -5,6 +5,7 @@
 #include "list.h"
 #include "tree.h"
 #include "symtab.h"
+#include "semantic.h"
 
 list_t *id_ptr;
 scope_t *top_scope;
@@ -27,9 +28,10 @@ scope_t *top_scope;
 %token BBEGIN END
 %token FUNC PROC
 %token IF THEN ELSE
-%token WHILE DO
+%token WHILE FOR DO
 %token DOTDOT
 %token ASSIGNOP
+%token REPEAT UNTIL
 
 %token <opval> RELOP
 %token LT LE GT GE EQ NE
@@ -46,6 +48,11 @@ scope_t *top_scope;
 %token <ival> INUM
 %token <rval> RNUM
 
+%type <ival> type
+%type <ival> standard_type
+
+%type <tval> identifier_list
+%type <tval> variable
 %type <tval> expression_list
 %type <tval> expression
 %type <tval> simple_expression
@@ -54,7 +61,8 @@ scope_t *top_scope;
 
 %%
 
-program: DEF ID '(' identifier_list ')' ';'
+program: 
+	DEF ID '(' identifier_list ')' ';'
     declarations
     subprogram_declarations
     compound_statement
@@ -62,24 +70,32 @@ program: DEF ID '(' identifier_list ')' ';'
     ;
 
 identifier_list: ID
-		{ scope_insert( top_scope, $1 ); }
+		{
+			id_ptr = scope_insert( top_scope, $1 ); 
+			$$ = make_id( id_ptr );
+		}
     | identifier_list ',' ID
-		{ scope_insert( top_scope, $3 ); }
+		{ 
+			id_ptr = scope_insert( top_scope, $3 ); 
+			$$ = make_tree( LIST, $1, make_id( id_ptr ));
+		}
     ;
 
 declarations: declarations VAR identifier_list ':' type ';'
+		{ semantic_set_type( $3, $5 ); }
     | /* empty */
     ;
 
-type: standard_type 
+type: standard_type { $$ = $1; }
 	| ARRAY '[' range ']' OF standard_type
+		{ $$ = -1; }
     ;
 
 range: INUM DOTDOT INUM
     ;
 
-standard_type: INTEGRAL 
-	| RATIONAL
+standard_type: INTEGRAL { $$ = INTEGRAL; }
+	| RATIONAL { $$ = RATIONAL; }
     ;
 
 subprogram_declarations: subprogram_declarations subprogram_declaration ';' 
@@ -131,7 +147,12 @@ statement_list: statement
     ;
 
 statement: variable ASSIGNOP expression
-		{ }
+		{ 
+			if(type_of($1)!=type_of($3)){
+				fprintf(stderr,"ERROR: type mismatch in assignment statement.\n");
+				exit(1);
+			}
+		}
 	| procedure_statement
 	| compound_statement
 	| IF expression THEN statement ELSE statement
@@ -142,7 +163,9 @@ statement: variable ASSIGNOP expression
     ;
 
 variable: ID
+		{ $$ = make_id( semantic_lookup( top_scope, $1 )); }
 	| ID '[' expression ']'
+		{ $$ = make_tree( ARRAY_ACCESS, make_id( semantic_lookup( top_scope, $1 )), $3 ); }
     ;
 
 procedure_statement: ID 
@@ -179,11 +202,11 @@ term: factor
 	;
 
 factor: ID
-		{ $$ = make_id( global_scope_search( top_scope, $1 ) ); }
+		{ $$ = make_id( semantic_lookup( top_scope, $1 ) ); }
 	| ID '(' expression_list ')'
-		{ $$ = make_tree( FUNCTION_CALL, make_id( global_scope_search( top_scope, $1 )), $3 ); }
+		{ $$ = make_tree( FUNCTION_CALL, make_id( semantic_lookup( top_scope, $1 )), $3 ); }
 	| ID '[' expression ']'
-		{ $$ = make_tree( ARRAY_ACCESS, make_id( global_scope_search( top_scope, $1 ) ), $3 ); }
+		{ $$ = make_tree( ARRAY_ACCESS, make_id( semantic_lookup( top_scope, $1 ) ), $3 ); }
 	| INUM
 		{ $$ = make_inum( $1 ); }
 	| RNUM
@@ -198,7 +221,6 @@ factor: ID
 
 main()
 {
-	id_ptr = NULL;
-	top_scope = NULL;
+	top_scope = scope_push(NULL);
     yyparse();
 }
