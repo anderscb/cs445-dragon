@@ -1,6 +1,8 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include "list.h"
+
 typedef struct tree_s {
     int type;       /*  */
     union {
