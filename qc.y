@@ -2,14 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "list.h"
 #include "tree.h"
+#include "symtab.h"
+
+list_t *id_ptr;
+scope_t *top_scope;
 %}
 
 %union {
 	/* token attributes */
 	int ival;	/* INUM */
 	float rval; /* RNUM */
-	char *sval;	/* ID */
+	list_t *sval;	/* ID */
 	int opval; 	/* RELOP ADDOP MULOP */
 
 	tree_t *tval;	/* tree attribute for grammar variables */
@@ -57,7 +62,9 @@ program: DEF ID '(' identifier_list ')' ';'
     ;
 
 identifier_list: ID
+		{ scope_insert( top_scope, $1 ); }
     | identifier_list ',' ID
+		{ scope_insert( top_scope, $3 ); }
     ;
 
 declarations: declarations VAR identifier_list ':' type ';'
@@ -84,10 +91,21 @@ subprogram_declaration:
 		declarations 
 		subprogram_declarations 
 		compound_statement
+		{ top_scope = scope_pop(top_scope); /* leaving inner scope */ }
     ;
 
-subprogram_header: FUNC ID arguments ':' standard_type ';' 
-	| PROC ID arguments ';'
+subprogram_header: FUNC ID
+		{
+			id_ptr = scope_insert( top_scope, $2 ); /* record function ID in current scope */
+			top_scope = scope_push( top_scope ); /* create a new scope */
+		}
+		arguments ':' standard_type ';' 
+	| PROC ID 
+		{
+			id_ptr = scope_insert( top_scope, $2 ); /* record procedure ID in current scope */
+			top_scope = scope_push( top_scope ); /* create a new scope */
+		}
+		arguments ';'
     ;
 
 arguments: '(' parameter_list ')' 
@@ -161,11 +179,11 @@ term: factor
 	;
 
 factor: ID
-		{ $$ = make_id( $1 ); }
+		{ $$ = make_id( global_scope_search( top_scope, $1 ) ); }
 	| ID '(' expression_list ')'
-		{ $$ = make_tree( FUNCTION_CALL, make_id( $1 ), $3 ); }
+		{ $$ = make_tree( FUNCTION_CALL, make_id( global_scope_search( top_scope, $1 )), $3 ); }
 	| ID '[' expression ']'
-		{ $$ = make_tree( ARRAY_ACCESS, make_id( $1 ), $3 ); }
+		{ $$ = make_tree( ARRAY_ACCESS, make_id( global_scope_search( top_scope, $1 ) ), $3 ); }
 	| INUM
 		{ $$ = make_inum( $1 ); }
 	| RNUM
@@ -180,5 +198,7 @@ factor: ID
 
 main()
 {
+	id_ptr = NULL;
+	top_scope = NULL;
     yyparse();
 }
