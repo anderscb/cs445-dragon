@@ -14,7 +14,7 @@ typedef struct list_s {
 
 /* constructor/destructor */
 list_t *make_list( char * );
-void free_list( list_t *);
+void free_list(list_t *);
 
 void list_print( list_t *);
 
