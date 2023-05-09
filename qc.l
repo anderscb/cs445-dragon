@@ -25,7 +25,11 @@ whitespace  [ \t]+
 "then"          { fprintf( stderr, "[THEN]" ); return THEN; }
 "else"          { fprintf( stderr, "[ELSE]" ); return ELSE; }
 "while"         { fprintf( stderr, "[WHILE]" ); return WHILE; }
+"or"            { fprintf( stderr, "[ADDOP:%d]", yylval.opval = OR ); return ADDOP; }
 "do"            { fprintf( stderr, "[DO]" ); return DO; }
+"div"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = DIV ); return MULOP; }
+"mod"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = MOD ); return MULOP; }
+"and"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = AND ); return MULOP; }
 {identifier}    { fprintf( stderr, "[ID:%s]", yylval.sval = make_list(yytext) ); return ID; }
 {number}        { fprintf( stderr, "[INUM:%d]", yylval.ival = atoi(yytext) ); return INUM; }
 {number}"."{number}     { fprintf( stderr, "[RNUM:%f]", yylval.rval = atof(yytext) ); return RNUM; }
@@ -39,12 +43,8 @@ whitespace  [ \t]+
 "="             { fprintf( stderr, "[RELOP:%d]", yylval.opval = EQ ); return RELOP; }
 "+"             { fprintf( stderr, "[ADDOP:%d]", yylval.opval = PLUS ); return ADDOP; }
 "-"             { fprintf( stderr, "[ADDOP:%d]", yylval.opval = MINUS ); return ADDOP; }
-"or"            { fprintf( stderr, "[ADDOP:%d]", yylval.opval = OR ); return ADDOP; }
 "*"             { fprintf( stderr, "[MULOP:%d]", yylval.opval = STAR ); return MULOP; }
 "/"             { fprintf( stderr, "[MULOP:%d]", yylval.opval = SLASH ); return MULOP; }
-"div"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = DIV ); return MULOP; }
-"mod"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = MOD ); return MULOP; }
-"and"           { fprintf( stderr, "[MULOP:%d]", yylval.opval = AND ); return MULOP; }
 "("             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }
 ")"             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }
 "["             { fprintf( stderr, "%c", yytext[0] ); return yytext[0]; }

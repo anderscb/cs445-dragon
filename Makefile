@@ -1,5 +1,5 @@
 qc: y.tab.o lex.yy.o semantic.o tree.o symtab.o list.o
-	gcc -g -o qc y.tab.o lex.yy.o semantic.o tree.o symtab.o list.o -ly -lfl -std=c11
+	gcc -g -o qc y.tab.o lex.yy.o semantic.o tree.o symtab.o list.o -ly -ll -std=c11
 
 y.tab.o: y.tab.c
 	gcc -g -c y.tab.c

@@ -16,7 +16,7 @@ scope_t *make_scope(){
 
 void free_scope(scope_t *p){
     /* stub: buggy */
-    free_list(p->table);
+    free_list(p->table[HASH_SIZE]);
     free(p);
 }
 
@@ -45,21 +45,21 @@ list_t *scope_insert(scope_t *top, list_t *name){
     if (top == NULL){
         return NULL;
     }
-    int index = hashpjw(name);
+    int index = hashpjw(name->name);
     list_t *start = top->table[index];
-    top->table[index] = list_insert(start,name);
+    top->table[index] = list_insert(start,name->name);
     return top->table[index];
 }
 
 /* search at top scope */
 list_t *scope_search(scope_t *top, list_t *name){
-    int index = hashpjw(name);
+    int index = hashpjw(name->name);
 
     if (top == NULL){
         return NULL;
     }
     list_t *start = top->table[index];
-    return list_search(start,name);
+    return list_search(start,name->name);
 }
 
 /* search in all scopes */
